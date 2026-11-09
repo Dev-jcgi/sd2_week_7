@@ -1,7 +1,8 @@
 import { T, Portada, Arch, Code, Cards, Card, YCapstone, QR } from './piezas.jsx';
 import { Receso, Agenda } from './extras.jsx';
-import { ACTIVIDADES } from '../data/actividades.js';
-import { useClase, useConexion } from '../lib/conexion.js';
+import { ACTIVIDADES, CODIGO_CIERRE } from '../data/actividades.js';
+import Pregunta from '../components/Pregunta.jsx';
+import Marcador from '../components/Marcador.jsx';
 
 /* Presentación de la Semana 7 · Desarrollo de Software 2.
    Cada columna (→) es un tema o una actividad; sus diapositivas (↓) profundizan.
@@ -42,15 +43,10 @@ const Cobertura = ({ rows }) => (
   </div>
 );
 
-/** Cuántos celulares hay conectados (solo se ve en la página del profesor, que tiene la conexión abierta). */
-function Conectados() {
-  const [c] = useClase();
-  const con = useConexion();
-  if (con.fase === 'desconectado' && !c.conectados) return null;
-  return <p className="d-vivo mono"><i /> {c.conectados} celulares conectados ahora mismo</p>;
-}
+/** Código que el estudiante escribe en su celular (#/vivo) para abrir una actividad o cerrar la sesión. */
+const Codigo = ({ c, color, texto }) => <div className="d-codigo" style={{ '--c': color }}><span className="mono">{texto}</span><b>{c}</b></div>;
 
-/* ── Actividades: la portada; las preguntas las lanza el profesor desde #/profesor y llegan a cada celular ── */
+/* ── Actividades: portada con su código + una diapositiva por pregunta (modo pantalla, el profesor revela) ── */
 function actividad(a) {
   return {
     id: a.id, titulo: `Actividad ${a.n}`, kind: 'act', act: a.id,
@@ -60,13 +56,19 @@ function actividad(a) {
         <h1>{a.nombre}</h1>
         <Dos r="1.3fr 1fr">
           <div className="d-act-modos">
-            <div><span className="mono">Cómo funciona</span><p>La pregunta llega sola a su celular, por la misma conexión del inicio. Acertar da hasta 500 puntos y la rapidez hasta 500 más.</p></div>
-            <div><span className="mono">Dato curioso</span><p>La respuesta correcta <b>nunca</b> viaja a su celular antes de revelarla: la califica el servidor.</p></div>
-            <div><span className="mono">Temas</span><p>{a.temas}</p></div>
+            <div><span className="mono">En tu celular</span><p>En la página de la sesión escribe el código de la derecha: se abre esta actividad. Respondes y ves al momento si acertaste.</p></div>
+            <div><span className="mono">En la pantalla</span><p>Cada equipo discute y responde en voz alta. El equipo que acierta suma puntos en el marcador.</p></div>
+            <div className="d-act-items">{a.preguntas.map((q, i) => <div key={q.id}><span className="mono">{i + 1}</span><p>{q.q}</p></div>)}</div>
           </div>
-          <div className="d-act-qr"><QR ruta="#/vivo" size={230} /><p className="mono">¿Se desconectaron? #/vivo</p><Conectados /></div>
+          <div className="d-act-qr"><Codigo c={a.codigo} color={a.color} texto="Código de la actividad" /><QR ruta="#/vivo" size={170} /><p className="mono">¿Cerraste la página? #/vivo</p></div>
         </Dos>
       </div>,
+      ...a.preguntas.map((q) => (
+        <div className="d-pant" key={q.id}>
+          <Pregunta q={q} modo="pantalla" />
+          <Marcador compact />
+        </div>
+      )),
     ],
   };
 }
@@ -80,21 +82,21 @@ export const COLS = [
       <h1>Primero la <em>prueba</em></h1>
       <p className="d-preg">Hoy escribimos la prueba antes que el código, lo demostramos con commits y medimos qué cubren nuestras pruebas.</p>
       <div className="d-hero-tags mono"><span>TDD</span><span>Commits</span><span>Cobertura</span><span>JaCoCo</span><span>user-module</span></div>
-      <p className="d-nav mono">→ avanzar · ↓ profundizar · ESC vista general</p>
+      <p className="d-nav mono">→ avanzar · ↓ profundizar · P marcador · ESC vista general</p>
     </div>,
     <>
       <T eti="Agenda">Dos horas, una regla real del capstone</T>
       <Agenda />
-      <p className="d-sub">Receso de 10 minutos a la mitad. Las actividades llegan a su celular y suman puntos: al final, podio.</p>
+      <p className="d-sub">Receso de 10 minutos a la mitad. Las actividades suman puntos por equipo: A, B, C y D.</p>
     </>,
     <>
-      <T eti="Conéctate ya">Un solo código para toda la clase</T>
+      <T eti="Inicia tu sesión">Un solo código QR para toda la clase</T>
       <Dos r="1fr 1fr">
-        <div className="d-act-qr"><QR ruta="#/vivo" size={300} /><p className="mono">#/vivo</p><Conectados /></div>
+        <div className="d-act-qr"><QR ruta="#/vivo" size={300} /><p className="mono">#/vivo</p></div>
         <Cards cols={1}>
-          <Card t="1 · Escanea y escribe tu nombre" c="#FF8A3D">Se abre la página En vivo. No hay que instalar nada.</Card>
-          <Card t="2 · No cierres la página" c="#6EA8FF">Tu celular queda conectado: las cuatro actividades te llegan solas.</Card>
-          <Card t="3 · Responde rápido" c="#C6F33A">Puntos por acertar y por rapidez. Al final, podio.</Card>
+          <Card t="1 · Escanea e inicia sesión" c="#FF8A3D">Escribe tu nombre y elige tu equipo. No hay que instalar nada.</Card>
+          <Card t="2 · No cierres la página" c="#6EA8FF">Las 4 actividades están ahí, bloqueadas. Cada una se abre con el código de su diapositiva.</Card>
+          <Card t="3 · Al final, cierra la sesión" c="#C6F33A">Con el código de cierre ves tu resumen: tómale captura.</Card>
         </Cards>
       </Dos>
     </>,
@@ -614,7 +616,7 @@ assertThat(repository.findById(id).orElseThrow().isActive()).isFalse();`}</Code>
   ACT.a4,
 
   /* ───────────── CIERRE ───────────── */
-  { id: 'cierre', titulo: 'Cierre', podio: true, slides: [
+  { id: 'cierre', titulo: 'Cierre', slides: [
     <>
       <T eti="Cierre">Cinco ideas para llevarse</T>
       <div className="d-ocho cinco">
@@ -650,10 +652,12 @@ assertThat(repository.findById(id).orElseThrow().isActive()).isFalse();`}</Code>
       </Dos>
     </>,
     <div className="d-final" key="f">
-      <p className="d-eti">Fin de la clase</p>
-      <h1>¡Gracias! Ahora, el <em>podio</em></h1>
-      <p className="d-preg">El profesor muestra el podio y finaliza la sesión: cada celular recibe su resultado final.</p>
-      <div className="d-act-qr"><QR ruta="#/ejercicio" size={200} /><p className="mono">#/ejercicio · para practicar en casa</p></div>
+      <p className="d-eti">Fin de la clase · finaliza tu sesión</p>
+      <h1>¡Gracias! <em>Podio</em> de equipos</h1>
+      <Dos r="1fr 1.4fr">
+        <div className="d-act-qr"><Codigo c={CODIGO_CIERRE} color="#FFD166" texto="Código de cierre" /><p className="mono">Escríbelo en #/vivo y toma captura de tu resumen</p></div>
+        <Marcador />
+      </Dos>
     </div>,
   ] },
 ];

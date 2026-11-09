@@ -2,15 +2,13 @@
 
 **Desarrollo de Software 2 · Sección E · Capstone Delivery System**
 
-Sesión de 2 horas con receso de 10 minutos. El sitio está en GitHub Pages y las actividades se juegan **en vivo** con un servidor WebSocket en Render: un solo QR para toda la clase.
+Sesión de 2 horas con receso de 10 minutos. Todo es estático (GitHub Pages): no usa servidor. **Un solo QR para toda la sesión.**
 
 | Parte | Ruta / carpeta | Qué es |
 |---|---|---|
 | Inicio | `#/` | Los 5 temas y los diagramas de la semana. |
-| Presentación 2D | `#/presentacion` | reveal.js para repasar sin conexión: una columna por tema (→) y detalle hacia abajo (↓). **ESC** la vista general. `?t=t3` abre un tema y `?a=a2` una actividad. |
-| En vivo (estudiante) | `#/vivo` | Escanea el QR una vez, escribe su nombre y queda conectado: las 4 actividades le llegan solas. Al finalizar la sesión ve su puntaje y su lugar. |
-| Profesor | `#/profesor` | **Iniciar sesión** con la clave → presentación + **Lanzar actividad N** → **Revelar respuesta** → **Siguiente pregunta** → **Mostrar podio** → **Finalizar sesión** → **Salir**. **C** abre el panel en vivo. |
-| Servidor | [`servidor/`](servidor/README.md) → Render | Java + Java-WebSocket. Las preguntas y sus respuestas viven solo aquí (Secret File `preguntas.json`). 14 pruebas JUnit. |
+| Presentación 2D | `#/presentacion` | reveal.js: una columna por tema (→) y detalle hacia abajo (↓). Cada actividad tiene su portada con el código y una diapositiva por pregunta con **Revelar respuesta**. **P** abre el marcador de equipos A–D, **ESC** la vista general. |
+| Mi sesión (estudiante) | `#/vivo` | **Un solo QR para toda la clase.** Inicia sesión con su nombre y equipo; las 4 actividades aparecen bloqueadas y cada una se abre con el **código** que muestra su diapositiva (ROJO, GITS, CAPA, AGEN). Responde con autocorrección y suma puntos en su celular. Con el **código de cierre** (FIN7, última diapositiva) finaliza la sesión y ve su resumen para la captura. |
 | Ejercicio TDD | `#/ejercicio`, `ejercicio-tdd/` | La regla «siempre queda un ADMIN activo» de user-module con TDD: `inicio` (regla 1 en rojo, reglas 2–5 como TODO) y `solucion` (7 pruebas, 98 % de cobertura, check de JaCoCo al 70 %). Java 25 + JUnit + AssertJ + JaCoCo. |
 | Diagramas | `archify/` → `public/diagramas/` | 6 diagramas hechos con [Archify](https://archify.si): ciclo TDD, TDD en GitLab, rebase vs. squash, cobertura por capa en user-module, JaCoCo en Maven y dónde va todo en el capstone. |
 
@@ -30,35 +28,22 @@ Sesión de 2 horas con receso de 10 minutos. El sitio está en GitHub Pages y la
 | 113–118 | **Actividad 4 · JaCoCo en acción** |
 | 118–120 | Cierre y podio de equipos |
 
-## Puesta en marcha (una sola vez)
-
-### 1. Servidor en Render (gratis)
-
-1. En [render.com](https://render.com): **New → Blueprint** → elige este repositorio. Render lee `render.yaml` y crea el servicio `sd2-semana7-vivo` (Docker, plan gratis).
-2. Te pedirá **PROFESOR_CLAVE**: la clave con la que entrarás a `#/profesor`. No se guarda en GitHub.
-3. En el servicio → **Environment → Secret Files** → nombre `preguntas.json` → pega el archivo de preguntas reales (está en la carpeta privada del profesor). Sin él se usan las preguntas de ejemplo.
-4. Si la URL no es `sd2-semana7-vivo.onrender.com`: en GitHub, **Settings → Secrets and variables → Actions → Variables** → `VITE_WS_URL` = `wss://<tu-servicio>.onrender.com` y vuelve a publicar.
-
-> El plan gratis duerme el servidor tras 15 minutos sin tráfico y tarda cerca de 1 minuto en despertar. **Abre `#/profesor` unos minutos antes de la clase.**
-
-### 2. Sitio en GitHub Pages
+## Publicar en GitHub Pages
 
 1. **Settings → Pages → Build and deployment → Source: GitHub Actions.**
 2. Cualquier push a `main` (o **Actions → Publicar en GitHub Pages → Run workflow**) publica el sitio en `https://<dominio>/sd2_week_7/`.
 
 ## En la clase
 
-1. Profesor: `#/profesor` → clave → **Iniciar sesión**. Presenta con las flechas.
-2. Estudiantes: escanean el QR de la diapositiva «Conéctate ya» (`#/vivo`) y escriben su nombre. **Un solo QR para toda la clase.**
-3. En cada columna de actividad aparece **Lanzar actividad N** → **Revelar respuesta** → **Siguiente pregunta**.
-4. En el cierre: **Mostrar podio** y **Finalizar sesión** (cada celular recibe su resultado y se desconecta). **Salir**.
+1. Abre `#/presentacion`. En la diapositiva «Inicia tu sesión» los estudiantes escanean el QR (`#/vivo`), escriben su nombre y eligen su equipo.
+2. En cada actividad, la portada muestra el código que la desbloquea en los celulares. Baja (↓) a cada pregunta, da el tiempo y pulsa **Revelar respuesta**. Suma puntos a los equipos con el marcador (**P**).
+3. En la última diapositiva aparece el código de cierre: cada estudiante finaliza su sesión y toma captura de su resumen. El marcador muestra el podio de equipos.
 
 ## Desarrollo local
 
 ```bash
-cd servidor && mvn package && PROFESOR_CLAVE=prueba java -jar target/sd2-vivo.jar   # servidor
-npm install && npm run dev                                                          # sitio (otra terminal)
-# abre http://localhost:5173/#/profesor?ws=ws://localhost:8080
+npm install
+npm run dev
 ```
 
 ## Ejercicio

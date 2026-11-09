@@ -1,101 +1,141 @@
-import { useEffect, useState } from 'react';
-import { conectar, desconectar, enviar, useClase, useConexion, CODIGOS } from '../lib/conexion.js';
+import { useState } from 'react';
+import { ACTIVIDADES, EQUIPOS, CODIGO_CIERRE } from '../data/actividades.js';
 import { store, celebrate } from '../lib/fx.js';
-import { Entrada, Resultado } from './Formatos.jsx';
-import Mensajes, { EstadoConexion } from './Mensajes.jsx';
+import Pregunta from './Pregunta.jsx';
 
-/* Página del ESTUDIANTE: un solo QR para toda la clase.
-   El celular abre UNA conexión WebSocket con el servidor de la clase y por ella le llegan todas las preguntas. */
-const EMOJIS = ['👍', '🔥', '🤯', '❓', '🚀'];
-const CLAVE_NOMBRE = 'sd2s7-nombre';
+/* La sesión del estudiante, sin servidor: un solo QR (#/vivo) para toda la clase.
+   1. Escribe su nombre y elige su equipo (iniciar sesión).
+   2. Cada actividad se desbloquea con el código que muestra su diapositiva.
+   3. Responde y ve al momento si acertó; los puntos se suman en este celular.
+   4. Con el código de cierre (última diapositiva) la sesión termina y queda el resumen para la captura. */
+const KEY = 'sd2w7-sesion';
+const NUEVA = { nombre: '', equipo: null, abiertas: [], res: {}, cerrada: null };
 
 export default function Vivo() {
-  const [nombre, setNombre] = useState(() => store.get(CLAVE_NOMBRE) || '');
-  const [dentro, setDentro] = useState(false);
-  const [c, setC] = useClase();
-  const con = useConexion();
-  const [verMsgs, setVerMsgs] = useState(false);
+  const [s, setS] = useState(() => ({ ...NUEVA, ...(store.get(KEY) || {}) }));
+  const guardar = (n) => { setS(n); store.set(KEY, n); };
+  const [nombre, setNombre] = useState(s.nombre);
+  const [act, setAct] = useState(null);
+  const [i, setI] = useState(0);
+  const [codigo, setCodigo] = useState('');
+  const [error, setError] = useState('');
 
-  const entrar = (e) => {
-    e?.preventDefault();
-    const n = nombre.trim().slice(0, 20);
-    if (!n) return;
-    store.set(CLAVE_NOMBRE, n);
-    setDentro(true);
-    conectar({ tipo: 'hola', rol: 'estudiante', nombre: n });
-  };
-  useEffect(() => { if (store.get(CLAVE_NOMBRE)) entrar(); return () => desconectar(); }, []);
-  useEffect(() => { if (c.resultado && c.nota === 1) celebrate(); }, [c.resultado, c.nota]);
+  const puntosDe = (a) => a.preguntas.reduce((t, q) => t + (s.res[q.id]?.pts || 0), 0);
+  const total = ACTIVIDADES.reduce((t, a) => t + puntosDe(a), 0);
+  const eq = EQUIPOS.find((e) => e.id === s.equipo);
 
-  if (!dentro) {
+  /* ── 1. iniciar sesión ── */
+  if (!s.nombre || !s.equipo) {
     return (
       <div className="page center-page">
-        <form className="panel narrow" onSubmit={entrar}>
-          <p className="eyebrow">Clase en vivo · DS2 Semana 7</p>
-          <h1 className="h-lg">Conéctate a la clase</h1>
-          <p className="exp">Te conectas una sola vez: todas las actividades de hoy te llegan aquí, sin volver a escanear.</p>
-          <div className="field"><label htmlFor="nom">Tu nombre o apodo</label><input id="nom" maxLength={20} value={nombre} onChange={(e) => setNombre(e.target.value)} placeholder="p. ej. Ana_TDD" autoFocus /></div>
-          <button className="btn" disabled={!nombre.trim()}>Conectarme</button>
+        <form className="panel narrow" onSubmit={(e) => e.preventDefault()}>
+          <p className="eyebrow">DS2 · Semana 7 · sesión de la clase</p>
+          <h1 className="h-lg">Inicia tu sesión</h1>
+          <p className="exp">Este es el único código QR de hoy. Deja esta página abierta: las cuatro actividades se desbloquean aquí durante la clase.</p>
+          <div className="field"><label htmlFor="nom">Tu nombre</label><input id="nom" maxLength={30} value={nombre} onChange={(e) => setNombre(e.target.value)} placeholder="Nombre y apellido" autoFocus /></div>
+          <p className="exp">Tu equipo</p>
+          <div className="equipos">
+            {EQUIPOS.map((e) => <button key={e.id} type="button" className="equipo" style={{ '--c': e.color }} disabled={!nombre.trim()}
+              onClick={() => guardar({ ...NUEVA, nombre: nombre.trim(), equipo: e.id, inicio: Date.now() })}><b>{e.nombre}</b><span className="mono">{e.modulo}</span></button>)}
+          </div>
         </form>
       </div>
     );
   }
 
-  const p = c.pregunta, r = c.resultado;
-  const rechazado = con.fase === 'desconectado' && con.cierre?.codigo === 1008;
-  let cuerpo;
-  if (c.fin) {
-    const top = c.fin.top || [];
-    cuerpo = (
-      <div className="qcard center-t">
-        <p className="eyebrow">La clase terminó · ¡gracias!</p>
-        <p className="big ok">{c.fin.puntos ?? c.puntos} pts</p>
-        <h2>{c.fin.lugar ? `Quedaste en el lugar ${c.fin.lugar}` : 'Gracias por participar'}</h2>
-        <div className="board">{top.slice(0, 5).map((x, i) => <div key={x.nombre} className="lrow"><span className="r mono">#{i + 1}</span><span className="nm">{x.nombre}</span><span className="s mono">{x.puntos}</span></div>)}</div>
-        <p className="exp">Para el Lab 7: lineamiento en la wiki, una tarea con TDD y la evidencia del Sprint 3, hasta el domingo 15/11.</p>
-        <div className="row-btns" style={{ justifyContent: 'center' }}><a className="btn" href="#/ejercicio">Ver el ejercicio TDD</a><a className="btn ghost" href="#/presentacion">Repasar la presentación</a></div>
+  const cabecera = (
+    <header className="sbar">
+      <span className="chip mono" style={{ borderColor: eq.color }}>{eq.nombre}</span>
+      <span className="who">{s.nombre}</span>
+      <span className="chip mono">{total} pts</span>
+    </header>
+  );
+
+  /* ── 4. sesión finalizada: resumen para la captura ── */
+  if (s.cerrada) {
+    return (
+      <div className="page practica">
+        {cabecera}
+        <main className="sbody">
+          <div className="qcard center-t">
+            <p className="eyebrow">Sesión finalizada · {new Date(s.cerrada).toLocaleString('es')}</p>
+            <p className="big ok">{total} pts</p>
+            <h2>{s.nombre} · {eq.nombre}</h2>
+            <div className="board">{ACTIVIDADES.map((a) => (
+              <div key={a.id} className="lrow"><span className="r mono">A{a.n}</span><span className="nm">{a.nombre}</span>
+                <span className="s mono">{s.abiertas.includes(a.id) ? `${puntosDe(a)} pts` : 'no abierta'}</span></div>
+            ))}</div>
+            <p className="exp">Dile a tu equipo tu total para el marcador. Para el Lab 7: lineamiento en la wiki, una tarea con TDD y la evidencia del Sprint 3, hasta el domingo 15/11.</p>
+            <div className="row-btns" style={{ justifyContent: 'center' }}><a className="btn" href="#/ejercicio">Ejercicio TDD</a><a className="btn ghost" href="#/presentacion">Repasar la presentación</a></div>
+          </div>
+          <button className="btn ghost" onClick={() => { if (confirm('¿Borrar esta sesión de este celular?')) { guardar(NUEVA); setNombre(''); } }}>Borrar la sesión de este celular</button>
+        </main>
       </div>
     );
-  } else if (rechazado) {
-    cuerpo = <div className="qcard center-t"><p className="big bad">1008</p><h2>El servidor cerró tu conexión</h2><p className="exp">{con.cierre.razon || CODIGOS[1008]}.</p><button className="btn" onClick={entrar}>Volver a conectarme</button></div>;
-  } else if (p && r && r.id === p.id) {
-    const nota = c.nota;
-    const titulo = r.formato === 'scale' ? 'Gracias' : nota == null ? 'Sin respuesta' : nota === 1 ? '¡Correcto!' : nota > 0 ? `Casi: ${Math.round(nota * 100)} %` : 'Esta vez no';
-    cuerpo = (
-      <>
-        <p className={`big center-t ${r.formato === 'scale' || nota === 1 ? 'ok' : nota > 0 ? 'meh' : 'bad'}`}>{titulo}</p>
-        <Resultado p={p} r={r} previo={r.id === 'a4q4' ? c.termometros.a1q4 : null} />
-        <p className="note mono center-t">Tu total: {c.puntos} pts</p>
-      </>
-    );
-  } else if (p) {
-    cuerpo = <Entrada key={p.id} p={p} enviada={c.miRespuesta != null}
-      onEnviar={(valor) => { if (enviar({ tipo: 'respuesta', id: p.id, valor })) setC((s) => ({ ...s, miRespuesta: valor })); }} />;
-  } else {
-    cuerpo = <div className="qcard center-t"><p className="eyebrow">Conectado y esperando</p><h2>Mira la pantalla del salón</h2><p className="exp">Cuando el profesor lance una pregunta, te llegará aquí al instante, sin recargar.</p></div>;
   }
 
+  /* ── 3. respondiendo una actividad ── */
+  if (act) {
+    const a = ACTIVIDADES.find((x) => x.id === act);
+    const q = a.preguntas[i];
+    const hecha = s.res[q.id];
+    return (
+      <div className="page practica">
+        {cabecera}
+        <main className="sbody">
+          <p className="mono note">Actividad {a.n} · {a.nombre} · pregunta {i + 1} de {a.preguntas.length}</p>
+          <Pregunta key={q.id} q={q} modo="practica" previo={q.compare ? s.res[q.compare]?.r : null}
+            onResultado={(r, pts) => { if (pts === 100) celebrate(); guardar({ ...s, res: { ...s.res, [q.id]: { r, pts: pts || 0 } } }); }} />
+          {hecha && (i + 1 < a.preguntas.length
+            ? <button className="btn" onClick={() => setI(i + 1)}>Siguiente pregunta</button>
+            : <button className="btn" onClick={() => { setAct(null); setI(0); }}>Terminar actividad · {puntosDe(a)} pts</button>)}
+        </main>
+      </div>
+    );
+  }
+
+  /* ── 2. la sesión: actividades bloqueadas y desbloqueadas ── */
+  const probar = (e) => {
+    e.preventDefault();
+    const c = codigo.trim().toUpperCase();
+    setCodigo('');
+    if (c === CODIGO_CIERRE) {
+      if (confirm('¿Finalizar tu sesión? Ya no podrás responder más actividades.')) { guardar({ ...s, cerrada: Date.now() }); celebrate(true); }
+      return;
+    }
+    const a = ACTIVIDADES.find((x) => x.codigo === c);
+    if (!a) { setError('Ese código no corresponde a ninguna actividad. Míralo en la pantalla.'); return; }
+    setError('');
+    guardar({ ...s, abiertas: s.abiertas.includes(a.id) ? s.abiertas : [...s.abiertas, a.id] });
+    setAct(a.id); setI(a.preguntas.findIndex((q) => !s.res[q.id]) === -1 ? 0 : a.preguntas.findIndex((q) => !s.res[q.id]));
+  };
+
   return (
-    <div className="page student vivo">
-      <header className="sbar">
-        <EstadoConexion />
-        <span className="who">{c.yo?.nombre || nombre}</span>
-        <span className="chip mono">{c.puntos} pts</span>
-        <span className="chip mono">👥 {c.conectados}</span>
-        {!c.fin && <button className="chip" onClick={() => { desconectar(); store.set(CLAVE_NOMBRE, null); setDentro(false); }}>cambiar nombre</button>}
-      </header>
+    <div className="page practica">
+      {cabecera}
       <main className="sbody">
-        {c.error && <p className="note bad" role="alert">Servidor: {c.error}</p>}
-        {cuerpo}
-        {!c.fin && <>
-          <div className="reacciones">
-            {EMOJIS.map((e) => <button key={e} onClick={() => enviar({ tipo: 'reaccion', emoji: e })} aria-label={`Reaccionar ${e}`}>{e}</button>)}
+        <form className="qcard codigo-form" onSubmit={probar}>
+          <p className="eyebrow">Código de la pantalla</p>
+          <div className="codigo-row">
+            <input aria-label="Código de la actividad" value={codigo} maxLength={4} onChange={(e) => setCodigo(e.target.value)} placeholder="ABCD" autoCapitalize="characters" />
+            <button className="btn" disabled={codigo.trim().length < 4}>Abrir</button>
           </div>
-          <div className="row-btns">
-            <button className="btn ghost" onClick={() => setVerMsgs(!verMsgs)}>{verMsgs ? 'Ocultar mensajes' : 'Ver mensajes de la conexión'}</button>
-          </div>
-          {verMsgs && <Mensajes />}
-        </>}
+          {error && <p className="note bad" role="alert">{error}</p>}
+          <p className="note">Cada actividad se abre con el código que muestra su diapositiva. Al final de la clase, el código de cierre finaliza tu sesión.</p>
+        </form>
+        <div className="act-lista">
+          {ACTIVIDADES.map((a) => {
+            const abierta = s.abiertas.includes(a.id);
+            const hechas = a.preguntas.filter((q) => s.res[q.id]).length;
+            return (
+              <button key={a.id} className={`act-item ${abierta ? '' : 'bloq'}`} style={{ '--c': a.color }} disabled={!abierta}
+                onClick={() => { setAct(a.id); const k = a.preguntas.findIndex((q) => !s.res[q.id]); setI(k === -1 ? 0 : k); }}>
+                <span className="mono">Actividad {a.n} · {a.momento}</span><b>{a.nombre}</b>
+                <i className="mono">{!abierta ? '🔒 bloqueada' : hechas === a.preguntas.length ? `✓ ${puntosDe(a)} pts` : `${hechas}/${a.preguntas.length} respondidas`}</i>
+              </button>
+            );
+          })}
+        </div>
       </main>
     </div>
   );

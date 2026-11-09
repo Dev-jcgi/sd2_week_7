@@ -78,3 +78,12 @@
 .qcard.pregunta .srow b { font-size: 18px; color: var(--accent); }
 .big.meh { color: #FFD166; }
 @media (prefers-reduced-motion: reduce) { .flota span, .estado i, .d-vivo i { animation: none; } }
+
+/* ---------- sesión sin servidor: código de actividad y de cierre ---------- */
+.codigo-form { display: grid; gap: 10px; }
+.codigo-row { display: grid; grid-template-columns: 1fr auto; gap: 10px; }
+.codigo-row input { font: 700 28px var(--f-mono); letter-spacing: .3em; text-transform: uppercase; text-align: center; padding: 10px 12px; border-radius: 12px; border: 1px solid var(--line); background: var(--surface2); color: var(--fg); min-width: 0; }
+.act-item.bloq { opacity: .55; }
+.d-codigo { display: grid; justify-items: center; gap: 6px; background: #141823; border: 2px dashed var(--c, #C6F33A); border-radius: 18px; padding: 16px 22px; }
+.d-codigo span { font-size: 16px !important; letter-spacing: .14em; text-transform: uppercase; color: #A7B0BE; }
+.d-codigo b { font: 800 72px var(--f-mono); letter-spacing: .18em; color: var(--c, #C6F33A); line-height: 1; }
