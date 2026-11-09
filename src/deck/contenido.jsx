@@ -654,7 +654,7 @@ assertThat(repository.findById(id).orElseThrow().isActive()).isFalse();`}</Code>
       <T eti="Lab 7 · hasta el domingo 15/11, 23:59">Entregables</T>
       <Dos>
         <Lista items={[
-          <><b>Actividad 1 (equipo)</b>: lineamiento en <span className="mono">Modulos/&lt;módulo&gt;/Pruebas-unitarias</span>.</>,
+          <><b>Actividad 1 (equipo)</b>: lineamiento en <span className="mono">Modulos/&lt;módulo&gt;/Pruebas-unitarias</span>. Se defiende el <b>martes 17/11</b>.</>,
           <><b>Actividad 2</b>: una tarea con TDD, capturas en rojo y en verde, y el enlace a los commits del MR.</>,
           <><b>Actividad 3</b>: evidencia del Sprint 3 en su página individual.</>,
           <>Ejercicio <span className="mono">ejercicio-tdd</span> como práctica.</>,
