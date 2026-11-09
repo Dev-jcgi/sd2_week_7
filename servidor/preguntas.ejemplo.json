@@ -1,0 +1,12 @@
+[
+ { "id": "e1", "actividad": 1, "formato": "quiz", "segundos": 20,
+   "texto": "Pregunta de ejemplo: ¿qué se escribe primero en TDD?",
+   "opciones": ["El código", "La prueba", "La documentación", "El commit"],
+   "correcta": 1,
+   "explicacion": "Este es el archivo de EJEMPLO. Las preguntas reales se cargan en Render como Secret File (preguntas.json)." },
+ { "id": "e2", "actividad": 1, "formato": "tf", "segundos": 15,
+   "texto": "Pregunta de ejemplo: la cobertura dice si el código está bien.",
+   "opciones": ["Verdadero", "Falso"],
+   "correcta": 1,
+   "explicacion": "Archivo de ejemplo." }
+]

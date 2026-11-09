@@ -31,3 +31,50 @@
 .pasos .cmd { display: block; margin-top: 8px; padding: 8px 12px; background: var(--surface2); border-radius: 8px; font-size: 13px; overflow-x: auto; white-space: nowrap; }
 
 @media (prefers-reduced-motion: reduce) { .d-cov-bar i { transition: none; } }
+
+/* ===================== Clase en vivo (tomado de DS5 Semana 7): estado, mensajes, página En vivo, reacciones ===================== */
+/* ── estado de la conexión ── */
+.estado { display: inline-flex; align-items: center; gap: 8px; font-size: 13px; padding: 5px 10px; border-radius: 999px; border: 1px solid var(--line); background: var(--surface2); white-space: nowrap; }
+.estado i { width: 9px; height: 9px; border-radius: 50%; background: var(--muted); }
+.estado.conectado i { background: var(--ok); box-shadow: 0 0 10px var(--ok); }
+.estado.conectando i, .estado.reconectando i, .estado.esperando i { background: #FFD166; animation: latido 1s infinite; }
+.estado.desconectado i { background: var(--bad); }
+@keyframes latido { 50% { opacity: 0.25; } }
+
+/* ── log de mensajes (como DevTools) ── */
+.msglog { display: grid; gap: 4px; max-height: 320px; overflow: auto; background: #07080C; border: 1px solid var(--line); border-radius: 14px; padding: 10px; }
+.msglog-h { font-size: 12px; color: var(--muted); overflow-wrap: anywhere; }
+.msg { display: grid; grid-template-columns: auto 1fr; gap: 8px; align-items: start; font-size: 12.5px; }
+.msg code { font-family: var(--f-mono); overflow-wrap: anywhere; color: #C9D1DC; }
+.msg .dir { font-weight: 700; }
+.msg.up .dir { color: var(--ok); }
+.msg.down .dir { color: var(--bad); }
+.drawer .msglog .msg.up .dir { color: #6EA8FF; max-width: 110px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+
+/* ── página En vivo ── */
+.vivo .sbody { display: grid; gap: 14px; padding: 14px max(16px, env(safe-area-inset-left, 0px)) 40px; max-width: 760px; margin: 0 auto; }
+.vivo .sbar { flex-wrap: wrap; }
+.reacciones { display: flex; justify-content: center; gap: 10px; flex-wrap: wrap; }
+.reacciones button { font-size: 28px; width: 56px; height: 56px; border-radius: 16px; border: 1px solid var(--line); background: var(--surface); }
+.reacciones button:active { transform: scale(0.92); }
+.lab { background: var(--surface); border: 1px dashed var(--line); border-radius: 16px; padding: 12px 16px; }
+.lab summary { cursor: pointer; font-weight: 700; }
+.lab[open] { display: grid; gap: 10px; }
+
+/* ── reacciones que flotan sobre la presentación ── */
+.flota { position: absolute; inset: 0; pointer-events: none; overflow: hidden; z-index: 7; }
+.flota span { position: absolute; bottom: -60px; font-size: 54px; display: grid; justify-items: center; animation: sube 3.2s ease-out forwards; }
+.flota small { font-size: 13px; font-family: var(--f-mono); color: var(--fg); background: rgba(0, 0, 0, 0.55); padding: 1px 8px; border-radius: 999px; }
+@keyframes sube { to { transform: translateY(-75vh); opacity: 0; } }
+.pin-badge { display: flex; gap: 10px; align-items: center; }
+
+/* ── comparador Polling / SSE / WebSocket ── */
+.comparador { display: grid; gap: 12px; }
+.d-vivo { display: inline-flex; align-items: center; gap: 10px; font-size: 20px; color: var(--ok); }
+.d-vivo i { width: 12px; height: 12px; border-radius: 50%; background: var(--ok); box-shadow: 0 0 12px var(--ok); animation: latido 1.2s infinite; }
+
+.fin-btn { border-color: var(--bad) !important; color: var(--bad) !important; }
+.fin-sesion { display: grid; gap: 12px; width: min(900px, 100%); }
+.qcard.pregunta .srow b { font-size: 18px; color: var(--accent); }
+.big.meh { color: #FFD166; }
+@media (prefers-reduced-motion: reduce) { .flota span, .estado i, .d-vivo i { animation: none; } }
