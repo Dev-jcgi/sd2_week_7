@@ -1,0 +1,103 @@
+{
+ "diagram_type": "sequence",
+ "meta": {
+  "title": "TDD en GitLab: del commit al merge",
+  "subtitle": "El orden de los commits es la evidencia. El pipeline corre sobre el último commit del push.",
+  "locale": "es",
+  "quality_profile": "showcase",
+  "output": "public/diagramas/tdd-gitlab.html"
+ },
+ "participants": [
+  {
+   "id": "dev",
+   "type": "frontend",
+   "label": "Estudiante",
+   "sublabel": "rama FEAT-57"
+  },
+  {
+   "id": "git",
+   "type": "database",
+   "label": "Git local",
+   "sublabel": "commits"
+  },
+  {
+   "id": "gl",
+   "type": "cloud",
+   "label": "GitLab",
+   "sublabel": "MR !n"
+  },
+  {
+   "id": "ci",
+   "type": "backend",
+   "label": "Pipeline",
+   "sublabel": "./mvnw verify"
+  },
+  {
+   "id": "sm",
+   "type": "external",
+   "label": "SM",
+   "sublabel": "revisa y aprueba"
+  }
+ ],
+ "segments": [
+  {
+   "from": 180,
+   "to": 320,
+   "label": "TDD en local"
+  },
+  {
+   "from": 360,
+   "to": 540,
+   "label": "Revisión"
+  }
+ ],
+ "messages": [
+  {
+   "from": "dev",
+   "to": "git",
+   "y": 200,
+   "label": "commit 1: Add test … (rojo)",
+   "variant": "emphasis"
+  },
+  {
+   "from": "dev",
+   "to": "git",
+   "y": 245,
+   "label": "commit 2: el código (verde)",
+   "variant": "emphasis"
+  },
+  {
+   "from": "git",
+   "to": "gl",
+   "y": 295,
+   "label": "push (después del verde)"
+  },
+  {
+   "from": "gl",
+   "to": "ci",
+   "y": 380,
+   "label": "corre el último commit"
+  },
+  {
+   "from": "ci",
+   "to": "gl",
+   "y": 425,
+   "label": "verde + reporte JaCoCo",
+   "variant": "return"
+  },
+  {
+   "from": "gl",
+   "to": "sm",
+   "y": 470,
+   "label": "pestaña Commits: prueba → código"
+  },
+  {
+   "from": "sm",
+   "to": "gl",
+   "y": 515,
+   "label": "merge con rebase, sin squash",
+   "variant": "return"
+  }
+ ],
+ "schema_version": 1
+}

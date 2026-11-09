@@ -1,0 +1,202 @@
+{
+ "diagram_type": "architecture",
+ "meta": {
+  "title": "¿Dónde va esto en el capstone?",
+  "subtitle": "Del laptop del estudiante a la wiki del equipo: TDD, pipeline, JaCoCo y lineamiento.",
+  "locale": "es",
+  "quality_profile": "showcase",
+  "output": "public/diagramas/capstone-calidad.html",
+  "views": [
+   {
+    "id": "v1",
+    "label": "1 · TDD en la rama",
+    "focus": [
+     "dev",
+     "repo"
+    ],
+    "note": "Commit de pruebas primero, después el código, en FEAT-n/feature/…"
+   },
+   {
+    "id": "v2",
+    "label": "2 · El MR lo comprueba",
+    "focus": [
+     "mr",
+     "ci",
+     "jac"
+    ],
+    "note": "El pipeline corre ./mvnw verify; JaCoCo genera el reporte y el SM revisa los commits."
+   },
+   {
+    "id": "v3",
+    "label": "3 · El equipo lo acuerda",
+    "focus": [
+     "wiki",
+     "sm"
+    ],
+    "note": "El lineamiento (Actividad 1) fija nombres, mocks y el % mínimo del módulo."
+   }
+  ]
+ },
+ "components": [
+  {
+   "id": "dev",
+   "type": "frontend",
+   "label": "Estudiante",
+   "sublabel": "IDE + ./mvnw test",
+   "pos": [
+    40,
+    80
+   ],
+   "size": [
+    190,
+    72
+   ]
+  },
+  {
+   "id": "repo",
+   "type": "database",
+   "label": "Rama FEAT-n",
+   "sublabel": "test → código",
+   "pos": [
+    40,
+    300
+   ],
+   "size": [
+    190,
+    72
+   ]
+  },
+  {
+   "id": "mr",
+   "type": "cloud",
+   "label": "Merge request",
+   "sublabel": "pestaña Commits",
+   "pos": [
+    380,
+    80
+   ],
+   "size": [
+    200,
+    72
+   ]
+  },
+  {
+   "id": "ci",
+   "type": "backend",
+   "label": "Pipeline",
+   "sublabel": "./mvnw verify",
+   "pos": [
+    380,
+    300
+   ],
+   "size": [
+    200,
+    72
+   ]
+  },
+  {
+   "id": "jac",
+   "type": "security",
+   "label": "JaCoCo",
+   "sublabel": "reporte + mínimo",
+   "pos": [
+    700,
+    300
+   ],
+   "size": [
+    190,
+    72
+   ]
+  },
+  {
+   "id": "sm",
+   "type": "external",
+   "label": "Scrum Master",
+   "sublabel": "aprueba, sin squash",
+   "pos": [
+    700,
+    80
+   ],
+   "size": [
+    190,
+    72
+   ]
+  },
+  {
+   "id": "wiki",
+   "type": "frontend",
+   "label": "Wiki del módulo",
+   "sublabel": "Pruebas-unitarias",
+   "pos": [
+    1000,
+    190
+   ],
+   "size": [
+    200,
+    72
+   ]
+  }
+ ],
+ "boundaries": [
+  {
+   "kind": "region",
+   "label": "Local",
+   "wraps": [
+    "dev",
+    "repo"
+   ]
+  },
+  {
+   "kind": "region",
+   "label": "GitLab",
+   "wraps": [
+    "mr",
+    "ci",
+    "jac",
+    "sm"
+   ]
+  }
+ ],
+ "connections": [
+  {
+   "id": "c1",
+   "from": "dev",
+   "to": "repo",
+   "label": "commits",
+   "variant": "emphasis"
+  },
+  {
+   "id": "c2",
+   "from": "repo",
+   "to": "mr",
+   "label": "push"
+  },
+  {
+   "id": "c3",
+   "from": "mr",
+   "to": "ci",
+   "label": "dispara"
+  },
+  {
+   "id": "c4",
+   "from": "ci",
+   "to": "jac",
+   "label": "verify",
+   "variant": "emphasis"
+  },
+  {
+   "id": "c5",
+   "from": "mr",
+   "to": "sm",
+   "label": "revisión"
+  },
+  {
+   "id": "c6",
+   "from": "wiki",
+   "to": "sm",
+   "label": "regla que revisa",
+   "variant": "dashed"
+  }
+ ],
+ "schema_version": 1
+}

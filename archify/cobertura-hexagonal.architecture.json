@@ -1,0 +1,201 @@
+{
+ "diagram_type": "architecture",
+ "meta": {
+  "title": "Cobertura por capa en user-module",
+  "subtitle": "JaCoCo, 8/11/2026. El mínimo se exige donde viven las reglas: dominio y aplicación.",
+  "locale": "es",
+  "quality_profile": "showcase",
+  "output": "public/diagramas/cobertura-hexagonal.html",
+  "views": [
+   {
+    "id": "v1",
+    "label": "1 · Se exige el mínimo",
+    "focus": [
+     "dom",
+     "uc"
+    ],
+    "note": "Dominio 97,8 % y casos de uso 99,4 %: aquí están las reglas del negocio."
+   },
+   {
+    "id": "v2",
+    "label": "2 · Se mide, sin mínimo",
+    "focus": [
+     "mem",
+     "jpa"
+    ],
+    "note": "Adaptadores de salida 98,8 %: se prueban con H2, pero no bloquean."
+   },
+   {
+    "id": "v3",
+    "label": "3 · Se excluye",
+    "focus": [
+     "ui",
+     "cfg"
+    ],
+    "note": "Pantallas JavaFX 13,5 % y configuración: se prueban a mano en delivery-system."
+   }
+  ]
+ },
+ "components": [
+  {
+   "id": "ui",
+   "type": "frontend",
+   "label": "Pantallas JavaFX",
+   "sublabel": "13,5 % · excluido",
+   "pos": [
+    40,
+    90
+   ],
+   "size": [
+    200,
+    72
+   ]
+  },
+  {
+   "id": "cfg",
+   "type": "external",
+   "label": "Configuración",
+   "sublabel": "@Configuration · excluido",
+   "pos": [
+    40,
+    300
+   ],
+   "size": [
+    200,
+    72
+   ]
+  },
+  {
+   "id": "uc",
+   "type": "backend",
+   "label": "Casos de uso",
+   "sublabel": "99,4 % · mínimo 70 %",
+   "pos": [
+    360,
+    90
+   ],
+   "size": [
+    210,
+    72
+   ]
+  },
+  {
+   "id": "dom",
+   "type": "backend",
+   "label": "Dominio",
+   "sublabel": "97,8 % · mínimo 70 %",
+   "pos": [
+    680,
+    90
+   ],
+   "size": [
+    200,
+    72
+   ]
+  },
+  {
+   "id": "mem",
+   "type": "database",
+   "label": "Repositorio en memoria",
+   "sublabel": "98,8 % · se mide",
+   "pos": [
+    360,
+    300
+   ],
+   "size": [
+    210,
+    72
+   ]
+  },
+  {
+   "id": "jpa",
+   "type": "database",
+   "label": "Adaptador JPA",
+   "sublabel": "probado con H2",
+   "pos": [
+    680,
+    300
+   ],
+   "size": [
+    200,
+    72
+   ],
+   "brand": "spring"
+  }
+ ],
+ "boundaries": [
+  {
+   "kind": "region",
+   "label": "Adaptadores de entrada",
+   "wraps": [
+    "ui",
+    "cfg"
+   ]
+  },
+  {
+   "kind": "region",
+   "label": "Núcleo: mínimo 70 %",
+   "wraps": [
+    "uc",
+    "dom"
+   ]
+  },
+  {
+   "kind": "region",
+   "label": "Adaptadores de salida",
+   "wraps": [
+    "mem",
+    "jpa"
+   ]
+  }
+ ],
+ "connections": [
+  {
+   "id": "c1",
+   "from": "ui",
+   "to": "uc",
+   "label": "llama",
+   "variant": "emphasis"
+  },
+  {
+   "id": "c2",
+   "from": "uc",
+   "to": "dom",
+   "label": "usa",
+   "variant": "emphasis"
+  },
+  {
+   "id": "c3",
+   "from": "mem",
+   "to": "uc",
+   "label": "implementa el puerto",
+   "variant": "dashed"
+  },
+  {
+   "id": "c4",
+   "from": "jpa",
+   "to": "uc",
+   "label": "implementa el puerto",
+   "variant": "dashed"
+  }
+ ],
+ "cards": [
+  {
+   "dot": "emerald",
+   "title": "Se exige",
+   "items": [
+    "domain y application",
+    "≥ 70 % de líneas (Sprint 3)"
+   ]
+  },
+  {
+   "dot": "cyan",
+   "title": "Se excluye",
+   "items": [
+    "adapter/in/ui y config",
+    "se prueban a mano en la app"
+   ]
+  }
+ ],
+ "schema_version": 1
+}

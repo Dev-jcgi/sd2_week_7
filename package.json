@@ -1,0 +1,25 @@
+{
+  "name": "sd2-semana7-tdd",
+  "private": true,
+  "version": "1.0.0",
+  "type": "module",
+  "description": "DS2 Semana 7 · TDD, commits de TDD en GitLab/GitHub, cobertura en la arquitectura hexagonal y JaCoCo con user-module del capstone: presentación 2D, diagramas Archify, actividades y ejercicio",
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build",
+    "preview": "vite preview"
+  },
+  "dependencies": {
+    "canvas-confetti": "1.9.3",
+    "gsap": "3.12.5",
+    "highlight.js": "11.11.1",
+    "qrcode": "^1.5.4",
+    "react": "18.3.1",
+    "react-dom": "18.3.1",
+    "reveal.js": "5.2.1"
+  },
+  "devDependencies": {
+    "@vitejs/plugin-react": "4.3.3",
+    "vite": "5.4.10"
+  }
+}

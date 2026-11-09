@@ -1,0 +1,130 @@
+{
+  "diagram_type": "workflow",
+  "meta": {
+    "title": "El ciclo TDD y sus commits",
+    "subtitle": "Rojo → verde → refactor. Cada paso termina en un commit separado.",
+    "locale": "es",
+    "quality_profile": "showcase",
+    "output": "public/diagramas/tdd-ciclo.html",
+    "animation": "trace"
+  },
+  "lanes": [
+    {
+      "id": "prueba",
+      "label": "Prueba (src/test)"
+    },
+    {
+      "id": "git",
+      "label": "Git"
+    },
+    {
+      "id": "codigo",
+      "label": "Código (src/main)"
+    }
+  ],
+  "phases": [
+    {
+      "id": "rojo",
+      "label": "🔴 Rojo",
+      "fromCol": 0,
+      "toCol": 1
+    },
+    {
+      "id": "verde",
+      "label": "🟢 Verde",
+      "fromCol": 2,
+      "toCol": 3,
+      "variant": "emphasis"
+    },
+    {
+      "id": "ref",
+      "label": "🔵 Refactor",
+      "fromCol": 4,
+      "toCol": 5,
+      "variant": "dashed"
+    }
+  ],
+  "mainPath": [
+    "escribe",
+    "c1",
+    "minimo",
+    "c2",
+    "limpia",
+    "c3"
+  ],
+  "nodes": [
+    {
+      "id": "escribe",
+      "lane": "prueba",
+      "col": 0,
+      "type": "frontend",
+      "label": "Escribe la prueba",
+      "sublabel": "falla al correrla"
+    },
+    {
+      "id": "c1",
+      "lane": "git",
+      "col": 1,
+      "type": "database",
+      "label": "Commit 1",
+      "sublabel": "solo pruebas"
+    },
+    {
+      "id": "minimo",
+      "lane": "codigo",
+      "col": 2,
+      "type": "backend",
+      "label": "Código mínimo",
+      "sublabel": "la prueba pasa"
+    },
+    {
+      "id": "c2",
+      "lane": "git",
+      "col": 3,
+      "type": "database",
+      "label": "Commit 2",
+      "sublabel": "el código"
+    },
+    {
+      "id": "limpia",
+      "lane": "codigo",
+      "col": 4,
+      "type": "backend",
+      "label": "Limpia",
+      "sublabel": "sigue en verde"
+    },
+    {
+      "id": "c3",
+      "lane": "git",
+      "col": 5,
+      "type": "database",
+      "label": "Commit 3",
+      "sublabel": "refactor (opcional)"
+    }
+  ],
+  "edges": [
+    {
+      "from": "escribe",
+      "to": "c1",
+      "label": "git add src/test"
+    },
+    {
+      "from": "c1",
+      "to": "minimo"
+    },
+    {
+      "from": "minimo",
+      "to": "c2",
+      "label": "git add src/main"
+    },
+    {
+      "from": "c2",
+      "to": "limpia"
+    },
+    {
+      "from": "limpia",
+      "to": "c3"
+    }
+  ],
+  "schema_version": 2
+}

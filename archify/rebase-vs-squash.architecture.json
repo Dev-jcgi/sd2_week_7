@@ -1,0 +1,166 @@
+{
+ "diagram_type": "architecture",
+ "meta": {
+  "title": "¿Qué llega a main?",
+  "subtitle": "Con rebase llegan los commits tal cual; con squash se funden en uno y se pierde la evidencia de TDD.",
+  "locale": "es",
+  "quality_profile": "showcase",
+  "output": "public/diagramas/rebase-vs-squash.html",
+  "views": [
+   {
+    "id": "v1",
+    "label": "1 · El MR",
+    "focus": [
+     "t",
+     "c"
+    ],
+    "note": "La rama tiene dos commits: primero la prueba, después el código."
+   },
+   {
+    "id": "v2",
+    "label": "2 · Rebase",
+    "focus": [
+     "mt",
+     "mc"
+    ],
+    "note": "main recibe los mismos dos commits, en el mismo orden."
+   },
+   {
+    "id": "v3",
+    "label": "3 · Squash",
+    "focus": [
+     "sq"
+    ],
+    "note": "main recibe un solo commit: ya no se ve qué se escribió primero."
+   }
+  ]
+ },
+ "components": [
+  {
+   "id": "t",
+   "type": "frontend",
+   "label": "Commit 1",
+   "sublabel": "Add test (rojo)",
+   "pos": [
+    40,
+    80
+   ],
+   "size": [
+    190,
+    72
+   ]
+  },
+  {
+   "id": "c",
+   "type": "backend",
+   "label": "Commit 2",
+   "sublabel": "el código (verde)",
+   "pos": [
+    40,
+    260
+   ],
+   "size": [
+    190,
+    72
+   ]
+  },
+  {
+   "id": "mt",
+   "type": "frontend",
+   "label": "main · commit 1",
+   "sublabel": "la prueba",
+   "pos": [
+    420,
+    80
+   ],
+   "size": [
+    200,
+    72
+   ]
+  },
+  {
+   "id": "mc",
+   "type": "backend",
+   "label": "main · commit 2",
+   "sublabel": "el código",
+   "pos": [
+    420,
+    260
+   ],
+   "size": [
+    200,
+    72
+   ]
+  },
+  {
+   "id": "sq",
+   "type": "security",
+   "label": "main · 1 commit",
+   "sublabel": "prueba + código",
+   "pos": [
+    780,
+    170
+   ],
+   "size": [
+    200,
+    72
+   ]
+  }
+ ],
+ "boundaries": [
+  {
+   "kind": "region",
+   "label": "Rama del MR",
+   "wraps": [
+    "t",
+    "c"
+   ]
+  },
+  {
+   "kind": "region",
+   "label": "Rebase ✅",
+   "wraps": [
+    "mt",
+    "mc"
+   ]
+  },
+  {
+   "kind": "region",
+   "label": "Squash ❌",
+   "wraps": [
+    "sq"
+   ]
+  }
+ ],
+ "connections": [
+  {
+   "id": "r1",
+   "from": "t",
+   "to": "mt",
+   "label": "rebase",
+   "variant": "emphasis"
+  },
+  {
+   "id": "r2",
+   "from": "c",
+   "to": "mc",
+   "label": "rebase",
+   "variant": "emphasis"
+  },
+  {
+   "id": "s1",
+   "from": "mt",
+   "to": "sq",
+   "label": "squash funde",
+   "variant": "dashed"
+  },
+  {
+   "id": "s2",
+   "from": "mc",
+   "to": "sq",
+   "label": "squash funde",
+   "variant": "dashed"
+  }
+ ],
+ "schema_version": 1
+}

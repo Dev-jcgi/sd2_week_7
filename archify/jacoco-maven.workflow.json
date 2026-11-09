@@ -1,0 +1,116 @@
+{
+  "diagram_type": "workflow",
+  "meta": {
+    "title": "JaCoCo dentro de ./mvnw verify",
+    "subtitle": "Tres goals del plugin, enganchados a las fases de Maven.",
+    "locale": "es",
+    "quality_profile": "showcase",
+    "output": "public/diagramas/jacoco-maven.html",
+    "animation": "trace"
+  },
+  "lanes": [
+    {
+      "id": "jacoco",
+      "label": "JaCoCo"
+    },
+    {
+      "id": "junit",
+      "label": "Surefire + JUnit"
+    },
+    {
+      "id": "maven",
+      "label": "Maven"
+    }
+  ],
+  "phases": [
+    {
+      "id": "p1",
+      "label": "Antes",
+      "fromCol": 0,
+      "toCol": 0
+    },
+    {
+      "id": "p2",
+      "label": "Pruebas",
+      "fromCol": 1,
+      "toCol": 2,
+      "variant": "emphasis"
+    },
+    {
+      "id": "p3",
+      "label": "verify",
+      "fromCol": 3,
+      "toCol": 4,
+      "variant": "dashed"
+    }
+  ],
+  "mainPath": [
+    "agent",
+    "tests",
+    "exec",
+    "report",
+    "check"
+  ],
+  "nodes": [
+    {
+      "id": "agent",
+      "lane": "jacoco",
+      "col": 0,
+      "type": "security",
+      "label": "prepare-agent",
+      "sublabel": "-javaagent en argLine"
+    },
+    {
+      "id": "tests",
+      "lane": "junit",
+      "col": 1,
+      "type": "backend",
+      "label": "Corre las pruebas",
+      "sublabel": "el agente cuenta líneas"
+    },
+    {
+      "id": "exec",
+      "lane": "jacoco",
+      "col": 2,
+      "type": "database",
+      "label": "jacoco.exec",
+      "sublabel": "datos crudos"
+    },
+    {
+      "id": "report",
+      "lane": "maven",
+      "col": 3,
+      "type": "frontend",
+      "label": "report",
+      "sublabel": "index.html · CSV"
+    },
+    {
+      "id": "check",
+      "lane": "jacoco",
+      "col": 4,
+      "type": "security",
+      "label": "check",
+      "sublabel": "falla si < 70 %"
+    }
+  ],
+  "edges": [
+    {
+      "from": "agent",
+      "to": "tests"
+    },
+    {
+      "from": "tests",
+      "to": "exec",
+      "label": "al terminar"
+    },
+    {
+      "from": "exec",
+      "to": "report"
+    },
+    {
+      "from": "report",
+      "to": "check"
+    }
+  ],
+  "schema_version": 2
+}

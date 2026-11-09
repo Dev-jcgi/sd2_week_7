@@ -1,0 +1,33 @@
+/* ===================== Semana 7 · commits de TDD, cobertura e inicio ===================== */
+
+/* ---------- historial de commits ---------- */
+.d-git { display: grid; gap: 12px; align-content: start; }
+.d-git-tit { font-size: 18px !important; letter-spacing: .12em; text-transform: uppercase; color: #A7B0BE; }
+.d-git-row { display: grid; grid-template-columns: 16px auto 1fr; grid-template-rows: auto auto; column-gap: 14px; align-items: center; background: #141823; border: 1px solid #232838; border-left: 6px solid var(--k); border-radius: 12px; padding: 14px 18px; }
+.d-git-row i { width: 16px; height: 16px; border-radius: 50%; background: var(--k); grid-row: 1 / 3; }
+.d-git-row span { font-size: 18px; color: #A7B0BE; }
+.d-git-row p { font-size: 22px !important; line-height: 1.35 !important; grid-column: 2 / 4; }
+.d-git-row b { font-size: 14px; letter-spacing: .1em; text-transform: uppercase; color: var(--k); grid-column: 3; grid-row: 1; justify-self: end; }
+.d-git-row.test { --k: #FF6B8B; } .d-git-row.code { --k: #C6F33A; } .d-git-row.ref { --k: #6EA8FF; } .d-git-row.mix { --k: #FFD166; }
+
+/* ---------- barras de cobertura ---------- */
+.d-cov { display: grid; gap: 18px; align-content: start; }
+.d-cov-row { display: grid; grid-template-columns: 360px 1fr 120px; gap: 18px; align-items: center; }
+.d-cov-row > span { font-size: 21px; color: #D6DBE4; }
+.d-cov-row > b { font-size: 26px; text-align: right; color: var(--k); }
+.d-cov-bar { position: relative; height: 26px; border-radius: 8px; background: #1A1D28; border: 1px solid #262A38; overflow: visible; }
+.d-cov-bar i { display: block; height: 100%; border-radius: 8px; background: var(--k); transition: width .8s cubic-bezier(.2,.8,.2,1); }
+.d-cov-bar em { position: absolute; top: -6px; bottom: -6px; border-left: 3px dashed #FFD166; }
+.d-cov-row.exige { --k: #C6F33A; } .d-cov-row.mide { --k: #6EA8FF; } .d-cov-row.excluye { --k: #6B7280; }
+.d-cov-ley { font-size: 17px !important; color: #A7B0BE; display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
+.d-cov-ley i { display: inline-block; width: 14px; height: 14px; border-radius: 4px; }
+.d-cov-ley i.exige { background: #C6F33A; } .d-cov-ley i.mide { background: #6EA8FF; } .d-cov-ley i.excluye { background: #6B7280; }
+
+/* ---------- inicio y ejercicio ---------- */
+.temas7 { margin-top: 28px; display: grid; gap: 12px; }
+.tema7 { border-top: 4px solid var(--c); }
+.tema7 span { font-size: 13px; color: var(--c); }
+.tema7 i { color: var(--c) !important; }
+.pasos .cmd { display: block; margin-top: 8px; padding: 8px 12px; background: var(--surface2); border-radius: 8px; font-size: 13px; overflow-x: auto; white-space: nowrap; }
+
+@media (prefers-reduced-motion: reduce) { .d-cov-bar i { transition: none; } }
