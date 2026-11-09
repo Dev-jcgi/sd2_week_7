@@ -2,13 +2,14 @@
 
 **Desarrollo de Software 2 · Sección E · Capstone Delivery System**
 
-Sesión de 2 horas con receso de 10 minutos. Todo es estático (GitHub Pages): no usa servidor. **Un solo QR para toda la sesión.**
+Sesión de 2 horas con receso de 10 minutos. Todo es estático (GitHub Pages), sin servidor propio: el navegador del profesor es el centro de la sesión y los celulares se conectan directo a él con [PeerJS](https://peerjs.com) (WebRTC). **Un solo QR para toda la clase.**
 
 | Parte | Ruta / carpeta | Qué es |
 |---|---|---|
 | Inicio | `#/` | Los 5 temas y los diagramas de la semana. |
-| Presentación 2D | `#/presentacion` | reveal.js: una columna por tema (→) y detalle hacia abajo (↓). Cada actividad tiene su portada con el código y una diapositiva por pregunta con **Revelar respuesta**. **P** abre el marcador de equipos A–D, **ESC** la vista general. |
-| Mi sesión (estudiante) | `#/vivo` | **Un solo QR para toda la clase.** Inicia sesión con su nombre y equipo; las 4 actividades aparecen bloqueadas y cada una se abre con el **código** que muestra su diapositiva (ROJO, GITS, CAPA, AGEN). Responde con autocorrección y suma puntos en su celular. Con el **código de cierre** (FIN7, última diapositiva) finaliza la sesión y ve su resumen para la captura. |
+| Presentación 2D | `#/presentacion` | reveal.js para repasar sin sesión: una columna por tema (→) y detalle hacia abajo (↓). Cada pregunta tiene su diapositiva con **Revelar respuesta**. **P** abre el marcador manual de equipos, **ESC** la vista general. |
+| Profesor | `#/profesor` | **Crear sesión** → aparece el QR de la sesión. Al llegar a la diapositiva de una actividad, **se lanza sola** en los celulares. **Cerrar sesión** y **Retomar sesión** en cualquier momento; si recargas la página, la sesión se retoma con el mismo QR. **P** muestra el podio (por nombre y por equipo). |
+| Mi sesión (estudiante) | `#/vivo?s=<sesión>` | Escanea el QR, escribe su nombre y elige su equipo. Cada actividad aparece sola cuando el profesor llega a ella; responde con autocorrección y su puntaje llega al podio. Si su red no permite la conexión, abre la actividad con el código de respaldo de la diapositiva. |
 | Ejercicio TDD | `#/ejercicio`, `ejercicio-tdd/` | La regla «siempre queda un ADMIN activo» de user-module con TDD: `inicio` (regla 1 en rojo, reglas 2–5 como TODO) y `solucion` (7 pruebas, 98 % de cobertura, check de JaCoCo al 70 %). Java 25 + JUnit + AssertJ + JaCoCo. |
 | Diagramas | `archify/` → `public/diagramas/` | 6 diagramas hechos con [Archify](https://archify.si): ciclo TDD, TDD en GitLab, rebase vs. squash, cobertura por capa en user-module, JaCoCo en Maven y dónde va todo en el capstone. |
 
@@ -35,9 +36,13 @@ Sesión de 2 horas con receso de 10 minutos. Todo es estático (GitHub Pages): n
 
 ## En la clase
 
-1. Abre `#/presentacion`. En la diapositiva «Inicia tu sesión» los estudiantes escanean el QR (`#/vivo`), escriben su nombre y eligen su equipo.
-2. En cada actividad, la portada muestra el código que la desbloquea en los celulares. Baja (↓) a cada pregunta, da el tiempo y pulsa **Revelar respuesta**. Suma puntos a los equipos con el marcador (**P**).
-3. En la última diapositiva aparece el código de cierre: cada estudiante finaliza su sesión y toma captura de su resumen. El marcador muestra el podio de equipos.
+1. Abre `#/profesor` y pulsa **Crear sesión**. No cierres esa pestaña: tu navegador es la sesión.
+2. En la diapositiva «Entra a la sesión», los estudiantes escanean el QR, escriben su nombre y eligen su equipo. Ves cuántos están conectados.
+3. Presenta. Al llegar a la portada de cada actividad, esta aparece sola en los celulares; en la portada ves cuántos ya respondieron. Baja (↓) a cada pregunta y pulsa **Revelar respuesta** para comentarla.
+4. **Cerrar sesión** cuando quieras (cada celular muestra el resumen de sus puntos) y **Retomar sesión** para continuar. **P** muestra el podio; la última diapositiva también.
+5. **Terminar y borrar** (con la sesión cerrada) elimina la sesión y su QR.
+
+> Si la red de la universidad bloquea las conexiones directas entre navegadores, el celular sigue en «Conectando…»: el estudiante abre la actividad con el código de respaldo de la portada (ROJO, GITS, CAPA, AGEN). Sus puntos no llegan al podio, pero puede responder igual.
 
 ## Desarrollo local
 

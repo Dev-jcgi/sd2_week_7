@@ -87,3 +87,10 @@
 .d-codigo { display: grid; justify-items: center; gap: 6px; background: #141823; border: 2px dashed var(--c, #C6F33A); border-radius: 18px; padding: 16px 22px; }
 .d-codigo span { font-size: 16px !important; letter-spacing: .14em; text-transform: uppercase; color: #A7B0BE; }
 .d-codigo b { font: 800 72px var(--f-mono); letter-spacing: .18em; color: var(--c, #C6F33A); line-height: 1; }
+.d-vivo { display: inline-flex; align-items: center; gap: 10px; font-size: 20px !important; color: var(--ok); }
+.d-vivo i { width: 12px; height: 12px; border-radius: 50%; background: var(--ok); box-shadow: 0 0 12px var(--ok); animation: latido 1.2s infinite; }
+.d-vivo.off { color: var(--bad); } .d-vivo.off i { background: var(--bad); box-shadow: none; animation: none; }
+.d-act-qr .d-codigo { padding: 8px 16px; } .d-act-qr .d-codigo b { font-size: 40px; }
+.eq-tot { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 8px; margin-top: 12px; }
+.eq-tot > div { display: grid; gap: 2px; justify-items: center; border: 1px solid; border-radius: 12px; padding: 8px; background: var(--surface2); }
+.eq-tot span { font-size: 12px; color: var(--muted); } .eq-tot b { font-size: 22px; }

@@ -22,7 +22,7 @@ export default function Landing() {
         <h1 className="display">Primero la <em>prueba</em>.</h1>
         <p className="lead">TDD con una regla real de user-module, la prueba antes del código en los commits, la cobertura de código en la arquitectura hexagonal y cómo medirla con JaCoCo.</p>
         <div className="cta">
-          <a className="btn" href="#/vivo">Iniciar mi sesión</a>
+          <a className="btn" href="#/profesor">Crear la sesión (profesor)</a>
           <a className="btn ghost" href="#/presentacion">Ver la presentación</a>
           <a className="btn ghost" href="#/ejercicio">Ejercicio TDD</a>
         </div>

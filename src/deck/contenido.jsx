@@ -1,8 +1,10 @@
 import { T, Portada, Arch, Code, Cards, Card, YCapstone, QR } from './piezas.jsx';
 import { Receso, Agenda } from './extras.jsx';
-import { ACTIVIDADES, CODIGO_CIERRE } from '../data/actividades.js';
+import { ACTIVIDADES } from '../data/actividades.js';
 import Pregunta from '../components/Pregunta.jsx';
 import Marcador from '../components/Marcador.jsx';
+import { useSesion, respondieron } from '../lib/sesion.js';
+import Podio from '../components/Podio.jsx';
 
 /* Presentación de la Semana 7 · Desarrollo de Software 2.
    Cada columna (→) es un tema o una actividad; sus diapositivas (↓) profundizan.
@@ -43,8 +45,27 @@ const Cobertura = ({ rows }) => (
   </div>
 );
 
-/** Código que el estudiante escribe en su celular (#/vivo) para abrir una actividad o cerrar la sesión. */
+/** Código de respaldo: abre la actividad en un celular que no logra conectarse a la sesión. */
 const Codigo = ({ c, color, texto }) => <div className="d-codigo" style={{ '--c': color }}><span className="mono">{texto}</span><b>{c}</b></div>;
+
+/** QR de la sesión: con la sesión creada (#/profesor) lleva su id; sin sesión, a #/vivo. */
+function SesionQR({ size }) {
+  const s = useSesion();
+  return <QR ruta={s.id ? `#/vivo?s=${s.id}` : '#/vivo'} size={size} />;
+}
+/** Estado en vivo de la sesión (solo con la sesión creada). */
+function EnVivo({ act }) {
+  const s = useSesion();
+  if (!s.id) return null;
+  if (!s.abierta) return <p className="d-vivo mono off"><i /> Sesión cerrada</p>;
+  const n = Object.keys(s.alumnos).length;
+  return <p className="d-vivo mono"><i /> {act ? `${respondieron(s.alumnos, act)} de ${n} ya respondieron` : `${s.conectados} celulares conectados · ${n} en la sesión`}</p>;
+}
+/** Podio: el de la sesión (por nombre y equipo) o, sin sesión, el marcador manual de equipos. */
+function PodioFinal() {
+  const s = useSesion();
+  return s.id ? <Podio alumnos={s.alumnos} /> : <Marcador />;
+}
 
 /* ── Actividades: portada con su código + una diapositiva por pregunta (modo pantalla, el profesor revela) ── */
 function actividad(a) {
@@ -56,11 +77,11 @@ function actividad(a) {
         <h1>{a.nombre}</h1>
         <Dos r="1.3fr 1fr">
           <div className="d-act-modos">
-            <div><span className="mono">En tu celular</span><p>En la página de la sesión escribe el código de la derecha: se abre esta actividad. Respondes y ves al momento si acertaste.</p></div>
+            <div><span className="mono">En tu celular</span><p>La actividad ya apareció en tu página de la sesión. Respondes y ves al momento si acertaste.</p></div>
             <div><span className="mono">En la pantalla</span><p>Cada equipo discute y responde en voz alta. El equipo que acierta suma puntos en el marcador.</p></div>
             <div className="d-act-items">{a.preguntas.map((q, i) => <div key={q.id}><span className="mono">{i + 1}</span><p>{q.q}</p></div>)}</div>
           </div>
-          <div className="d-act-qr"><Codigo c={a.codigo} color={a.color} texto="Código de la actividad" /><QR ruta="#/vivo" size={170} /><p className="mono">¿Cerraste la página? #/vivo</p></div>
+          <div className="d-act-qr"><SesionQR size={190} /><p className="mono">¿Recién llegas? Escanea y entra</p><EnVivo act={a.id} /><Codigo c={a.codigo} color={a.color} texto="Si no conecta: código" /></div>
         </Dos>
       </div>,
       ...a.preguntas.map((q) => (
@@ -90,13 +111,13 @@ export const COLS = [
       <p className="d-sub">Receso de 10 minutos a la mitad. Las actividades suman puntos por equipo: A, B, C y D.</p>
     </>,
     <>
-      <T eti="Inicia tu sesión">Un solo código QR para toda la clase</T>
+      <T eti="Entra a la sesión">Un solo código QR para toda la clase</T>
       <Dos r="1fr 1fr">
-        <div className="d-act-qr"><QR ruta="#/vivo" size={300} /><p className="mono">#/vivo</p></div>
+        <div className="d-act-qr"><SesionQR size={300} /><p className="mono">un solo código para toda la clase</p><EnVivo /></div>
         <Cards cols={1}>
-          <Card t="1 · Escanea e inicia sesión" c="#FF8A3D">Escribe tu nombre y elige tu equipo. No hay que instalar nada.</Card>
-          <Card t="2 · No cierres la página" c="#6EA8FF">Las 4 actividades están ahí, bloqueadas. Cada una se abre con el código de su diapositiva.</Card>
-          <Card t="3 · Al final, cierra la sesión" c="#C6F33A">Con el código de cierre ves tu resumen: tómale captura.</Card>
+          <Card t="1 · Escanea y entra" c="#FF8A3D">Escribe tu nombre y elige tu equipo. No hay que instalar nada.</Card>
+          <Card t="2 · No cierres la página" c="#6EA8FF">Cuando lleguemos a una actividad, aparece sola en tu celular.</Card>
+          <Card t="3 · Al final, tu resumen" c="#C6F33A">Cuando el profesor cierra la sesión, ves tus puntos por actividad.</Card>
         </Cards>
       </Dos>
     </>,
@@ -652,12 +673,9 @@ assertThat(repository.findById(id).orElseThrow().isActive()).isFalse();`}</Code>
       </Dos>
     </>,
     <div className="d-final" key="f">
-      <p className="d-eti">Fin de la clase · finaliza tu sesión</p>
-      <h1>¡Gracias! <em>Podio</em> de equipos</h1>
-      <Dos r="1fr 1.4fr">
-        <div className="d-act-qr"><Codigo c={CODIGO_CIERRE} color="#FFD166" texto="Código de cierre" /><p className="mono">Escríbelo en #/vivo y toma captura de tu resumen</p></div>
-        <Marcador />
-      </Dos>
+      <p className="d-eti">Fin de la clase</p>
+      <h1>¡Gracias! Este es el <em>podio</em></h1>
+      <PodioFinal />
     </div>,
   ] },
 ];

@@ -1,6 +1,6 @@
-// Actividades de la Semana 7 (SD2). Sin servidor: un solo QR (#/vivo) para toda la sesión.
-// Cada actividad se desbloquea en el celular con el código que muestra su diapositiva, y la sesión se cierra
-// con CODIGO_CIERRE (última diapositiva). Los equipos A–D compiten en la pantalla con el marcador del profesor.
+// Actividades de la Semana 7 (SD2). Se juegan en la sesión que crea el profesor (#/profesor): un solo QR
+// (#/vivo?s=<sesión>) y cada actividad aparece sola en los celulares al llegar a su diapositiva.
+// "codigo" es el respaldo para un celular que no logra conectarse: abre la actividad sin la sesión.
 // Tipos: quiz · tf · classify (tarjetas a categorías) · order (ordenar) · scale (termómetro, sin respuesta correcta).
 // En "order", "o" ya viene desordenado y "a" es el orden correcto (índices de "o").
 
@@ -50,7 +50,6 @@ export const ACTIVIDADES = [
     { id: 'a4q4', type: 'scale', t: 40, q: 'Termómetro final: ¿y ahora qué tan seguro te sientes?', o: TERMO, lo: 'nada', hi: 'podría explicarlo', compare: 'a1q4' },
   ] },
 ];
-export const CODIGO_CIERRE = 'FIN7';
 export const ACTIVIDAD = Object.fromEntries(ACTIVIDADES.map((a) => [a.id, a]));
 export const LETRAS = ['A', 'B', 'C', 'D', 'E'];
 export const EQUIPOS = [
